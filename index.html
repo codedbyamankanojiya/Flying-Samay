@@ -1,0 +1,1083 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-83WH5VBG8L"></script>
+    <script>
+        // console.log('GA4 - Script loaded');
+        window.dataLayer = window.dataLayer || [];
+        // console.log('GA4 - DataLayer initialized');
+
+        function gtag() {
+            console.log('GA4 - gtag called with:', arguments);
+            dataLayer.push(arguments);
+        }
+
+        try {
+            gtag('js', new Date());
+            gtag('config', 'G-83WH5VBG8L');
+            console.log('GA4 - gtag config called');
+        } catch (e) {
+            // console.error('GA4 - Error initializing gtag:', e);
+        }
+
+        // Debug event to verify GA4 is working
+        gtag('event', 'test_event', {
+            'event_category': 'debug',
+            'event_label': 'Test Event',
+            'value': 1
+        });
+        // console.log('GA4 Debug - Test event sent');
+
+        // Track game start
+        function trackGameStart() {
+            gtag('event', 'game_start', {
+                'event_category': 'game',
+                'event_label': 'Game Started',
+                'value': 1
+            });
+        }
+
+        // Track game over
+        function trackGameOver(reason, score) {
+            gtag('event', 'game_over', {
+                'event_category': 'game',
+                'event_label': reason || 'Unknown',
+                'value': score || 0,
+                'non_interaction': false
+            });
+        }
+
+        // Track play time
+        let gameStartTime;
+        function startPlayTimeTracking() {
+            gameStartTime = new Date();
+        }
+
+        function trackPlayTime() {
+            if (gameStartTime) {
+                const endTime = new Date();
+                const playTimeSeconds = Math.round((endTime - gameStartTime) / 1000);
+
+                gtag('event', 'play_time', {
+                    'event_category': 'engagement',
+                    'event_label': 'Game Play Time',
+                    'value': playTimeSeconds
+                });
+
+                gameStartTime = null;
+            }
+        }
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Flying Samay</title>
+    <link rel="icon" type="image/png" href="https://i.ibb.co/LzQg8tcm/samay-raina-removebg-preview.png">
+    <!-- Add Fun Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Titan+One&family=Nunito:wght@700;900&family=VT323&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            /* Fun Palette derived from the Toy/Cartoon images */
+            --pop-blue: #4834d4;
+            --pop-yellow: #f9ca24;
+            --pop-pink: #ff7979;
+            --pop-orange: #f0932b;
+            --pop-green: #6ab04c;
+            --pop-white: #ffffff;
+            --pop-dark: #30336b;
+            --game-gap: 200px;
+            /* Default gap between pillars */
+            --game-speed: 3;
+            /* Default game speed */
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: var(--pop-blue);
+            /* Grid pattern background with blue tint overlay */
+            background-image:
+                linear-gradient(rgba(72, 52, 212, 0.4), rgba(72, 52, 212, 0.4)),
+                linear-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+            background-size: 40px 40px;
+            font-family: 'Nunito', sans-serif;
+            touch-action: none;
+        }
+
+        #gameCanvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        #ui-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            /* background: rgba(72, 52, 212, 0.4);  Blue tint overlay removed from here */
+        }
+
+        .screen {
+            /* Sticker / Pop-up Look */
+            background: var(--pop-yellow);
+            padding: 2.5rem;
+            border-radius: 20px;
+            text-align: center;
+            color: var(--pop-dark);
+            /* Thick white border for sticker effect */
+            border: 8px solid var(--pop-white);
+            pointer-events: auto;
+            max-width: 90%;
+            width: 450px;
+            /* Hard shadow for pop art feel */
+            box-shadow: 10px 10px 0px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            position: relative;
+            transform: rotate(-2deg);
+            /* Jaunty angle */
+        }
+
+        h1 {
+            margin: 0 0 5px 0;
+            font-size: 3rem;
+            color: var(--pop-pink);
+            text-transform: uppercase;
+            font-family: 'Titan One', cursive;
+            /* Comic book outline stroke */
+            -webkit-text-stroke: 2px var(--pop-dark);
+            text-shadow: 4px 4px 0px var(--pop-white);
+            letter-spacing: 1px;
+            line-height: 1.1;
+        }
+
+        p {
+            font-size: 1.4rem;
+            margin: 5px 0;
+            font-weight: 900;
+            color: var(--pop-dark);
+        }
+
+        .sub-text {
+            color: var(--pop-blue);
+            font-size: 1.1rem;
+            margin-top: -5px;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        button {
+            /* Bubbly Button Styling */
+            background: var(--pop-orange);
+            color: var(--pop-white);
+            border: 4px solid var(--pop-white);
+            padding: 15px 30px;
+            font-size: 1.5rem;
+            border-radius: 50px;
+            /* Pill shape */
+            cursor: pointer;
+            font-weight: 900;
+            font-family: 'Titan One', cursive;
+            transition: transform 0.1s;
+            box-shadow: 0 6px 0 #d35400;
+            /* Darker orange shadow */
+            text-transform: uppercase;
+            margin-top: 10px;
+            width: 100%;
+            text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.2);
+        }
+
+        button:active {
+            transform: translateY(6px);
+            box-shadow: 0 0 0 #d35400;
+        }
+
+        button:hover {
+            filter: brightness(1.1);
+            transform: scale(1.02);
+        }
+
+        .gemini-btn {
+            /* Fun Purple/Blue Gradient */
+            background: linear-gradient(135deg, #a29bfe, #6c5ce7);
+            box-shadow: 0 6px 0 #4834d4;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-family: 'Nunito', sans-serif;
+            font-weight: 900;
+        }
+
+        .gemini-btn:active {
+            box-shadow: 0 0 0 #4834d4;
+            transform: translateY(6px);
+        }
+
+        .ai-response-box {
+            /* Chat bubble look */
+            background: var(--pop-white);
+            border: 4px solid var(--pop-dark);
+            border-radius: 15px;
+            padding: 15px;
+            margin-top: 10px;
+            font-size: 1.1rem;
+            text-align: left;
+            font-family: 'Nunito', sans-serif;
+            color: var(--pop-dark);
+            width: 100%;
+            box-sizing: border-box;
+            min-height: 80px;
+            display: none;
+            white-space: pre-wrap;
+            box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.1);
+        }
+
+        #score-display {
+            position: absolute;
+            top: 8%;
+            width: 100%;
+            text-align: center;
+            font-size: 6rem;
+            color: var(--pop-yellow);
+            font-family: 'Titan One', cursive;
+            /* Heavy dark stroke for visibility */
+            -webkit-text-stroke: 3px var(--pop-dark);
+            text-shadow: 5px 5px 0 var(--pop-pink);
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        #mute-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--pop-pink);
+            color: var(--pop-white);
+            border: 3px solid var(--pop-white);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 24px;
+            cursor: pointer;
+            pointer-events: auto;
+            z-index: 20;
+            padding: 0;
+            box-shadow: 0 4px 0 #b33939;
+            margin-top: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #mute-btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 0 0 #b33939;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        @media (max-width: 600px) {
+            :root {
+                --game-gap: 240px;
+                /* Larger gap for mobile */
+                --game-speed: 2.5;
+                /* Slightly slower for mobile */
+            }
+
+            h1 {
+                font-size: 2.2rem;
+            }
+
+            button {
+                padding: 12px 20px;
+                font-size: 1.2rem;
+                min-width: 180px;
+                margin: 8px auto;
+            }
+
+            #score-display {
+                font-size: 3.5rem;
+                top: 5%;
+                text-shadow: 2px 2px 0 #000;
+            }
+
+            .screen {
+                width: 90%;
+                padding: 1.5rem;
+                box-sizing: border-box;
+            }
+
+            .ai-response-box {
+                font-size: 0.9rem;
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="score-display" class="hidden">0</div>
+    <button id="mute-btn">🔊</button>
+    <audio id="scoreSound" preload="auto">
+        <source src="samay-raina-on-drugs-shorts-trending_w9Y59fz9.mp3" type="audio/mpeg">
+    </audio>
+
+
+    <div id="ui-layer">
+        <div id="start-screen" class="screen">
+            <h1>Supreme Leader's<br>Hard Mode</h1>
+            <p>From <strong>Kashmir</strong> to <strong>Comedy</strong>!</p>
+            <p class="sub-text">Warning: High Cancellation Risk!</p>
+            <button id="start-btn">Start Stream</button>
+        </div>
+
+        <div id="game-over-screen" class="screen hidden">
+            <!-- Fun red/pink color for 'Cancelled' -->
+            <h1 style="color: #ff4757; -webkit-text-stroke: 2px #fff; text-shadow: 4px 4px 0 #2f3542;">CANCELLED!</h1>
+            <p id="death-reason">You got cancelled.</p>
+            <p style="font-family: 'Titan One', cursive; font-size: 1.2rem; margin-top: 10px; color: #30336b;">
+                Score: <span id="final-score" style="color: #e056fd;">0</span> |
+                High Score: <span id="high-score" style="color: #e056fd;">0</span>
+            </p>
+
+            <button id="apology-btn" class="gemini-btn">✨ Draft Apology Tweet</button>
+            <div id="ai-apology-text" class="ai-response-box"></div>
+
+            <button id="restart-btn" style="background: #6ab04c; box-shadow: 0 6px 0 #3c632b;">Rematch?</button>
+        </div>
+    </div>
+
+    <canvas id="gameCanvas"></canvas>
+
+    <script>
+        const apiKey = "AIzaSyDTbahyQdZngZJhbCBB2VFyafni5Gx2PSM";
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // UI Elements
+        const startScreen = document.getElementById('start-screen');
+        const gameOverScreen = document.getElementById('game-over-screen');
+        const scoreDisplay = document.getElementById('score-display');
+        const finalScoreSpan = document.getElementById('final-score');
+        const highScoreSpan = document.getElementById('high-score');
+        const deathReasonSpan = document.getElementById('death-reason');
+        const startBtn = document.getElementById('start-btn');
+        const restartBtn = document.getElementById('restart-btn');
+        const muteBtn = document.getElementById('mute-btn');
+
+        // Gemini Elements
+        const apologyBtn = document.getElementById('apology-btn');
+        const aiTextDiv = document.getElementById('ai-apology-text');
+
+        // Game State
+        let frames = 0;
+        let score = 0;
+        let highScore = localStorage.getItem('samay_highscore') || 0;
+        let gameSpeed = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--game-speed'));
+        let currentGap = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--game-gap'));
+        let isGameOver = false;
+        let isPlaying = false;
+        let obstacles = [];
+        let isMuted = false;
+        let lastDeathReason = "Unknown";
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+        // --- PHOTO SETUP ---
+        const samayImg = new Image();
+        samayImg.crossOrigin = "Anonymous";
+        samayImg.src = "https://i.ibb.co/LzQg8tcm/samay-raina-removebg-preview.png";
+
+        // --- BACKGROUND SETUP ---
+        const bgImg = new Image();
+        bgImg.crossOrigin = "Anonymous";
+        // Fixed broken URL from user's code
+        bgImg.src = "https://i.ib";
+
+        // --- PILLAR SETUP ---
+        const policeImg = new Image();
+        policeImg.crossOrigin = "Anonymous";
+        policeImg.src = "https://i.ibb.co/4ZP2tzG0/jnagar-1753997433police-photo.jpg";
+
+
+        const ranveerImg = new Image();
+        ranveerImg.crossOrigin = "Anonymous";
+        ranveerImg.src = "https://i.ibb.co/qYV1zJFS/piller.png";
+
+
+        const knightImg = new Image();
+        knightImg.crossOrigin = "Anonymous";
+        knightImg.src = "https://i.ibb.co/SDbrr8YM/HFA51188-A-lg.webp";
+
+        const pillarTextures = [policeImg, ranveerImg, knightImg];
+        let lastPillarTexture = null;
+
+        // --- GEMINI API INTEGRATION ---
+        async function generateApology() {
+            if (!apiKey) {
+                aiTextDiv.style.display = 'block';
+                aiTextDiv.textContent = "Error: API Key missing.";
+                return;
+            }
+
+            apologyBtn.disabled = true;
+            apologyBtn.textContent = "✨ Drafting...";
+            aiTextDiv.style.display = 'block';
+            aiTextDiv.textContent = "Consulting PR team...";
+            const link = "https://flying-samay-raina.vercel.app/";
+            try {
+                const prompt = `You are a satirical AI writing for comedian Samay Raina. 
+            He just lost a game called 'Controversy Dodge' by hitting a "${lastDeathReason}" obstacle. 
+            He scored ${score} points (which is ${score < 5 ? "pathetic" : "decent"}). 
+            
+            Write a short, funny, sarcastic apology tweet (max 280 chars) from him. 
+            Use his style: slightly arrogant, self-deprecating, maybe using Hinglish words like 'Arre yaar', 'Scene set hai', etc. 
+            Make it sound like he's blaming the game or the audience, not himself.
+            
+            Also give this link "${link}" for people to play and try it out them self `;
+
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+                });
+
+                const data = await response.json();
+                const text = data.candidates?.[0]?.content?.parts?.[0]?.text || "System Error: PR Team on strike.";
+
+                aiTextDiv.textContent = "";
+                let i = 0;
+                const typeInterval = setInterval(() => {
+                    aiTextDiv.textContent += text.charAt(i);
+                    i++;
+                    if (i >= text.length) clearInterval(typeInterval);
+                }, 30);
+
+                apologyBtn.textContent = "✨ Draft Another";
+                apologyBtn.disabled = false;
+
+            } catch (error) {
+                console.error("Gemini Error:", error);
+                aiTextDiv.textContent = "Failed to connect to comedy servers.";
+                apologyBtn.textContent = "✨ Retry";
+                apologyBtn.disabled = false;
+            }
+        }
+
+        apologyBtn.addEventListener('click', generateApology);
+
+        // --- ROBUST AUDIO SYSTEM ---
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        const audioCtx = new AudioContext();
+
+        // Flags to track if external audio worked
+        let bgMusicLoaded = false;
+        let hitMusicLoaded = false;
+
+        // 1. External Audio Objects
+        const bgMusic = new Audio("https://scrawny-aquamarine-udhbdkfvgp-3amuuxbgc8.edgeone.dev/Samay%20raina%20reacting%20to%20his%20hilarious%20singing%20%20Reddit%20reacts.mp3");
+        bgMusic.loop = true;
+        bgMusic.volume = 0.6;
+
+        // Check if BG music loads successfully
+        bgMusic.addEventListener('canplaythrough', () => { bgMusicLoaded = true; });
+        bgMusic.addEventListener('error', () => { console.log("BG Music Failed, using synth"); bgMusicLoaded = false; });
+
+        const hitMusic = new Audio("samay-raina-calling-balraj-on-livestream-samayraina-darkcomedy_wO8S1i4Y.mp3");
+        hitMusic.volume = 1.0;
+
+        // Check if Hit music loads successfully
+        hitMusic.addEventListener('canplaythrough', () => { hitMusicLoaded = true; });
+        hitMusic.addEventListener('error', () => { console.log("Hit Music Failed, using synth"); hitMusicLoaded = false; });
+
+        // 2. Synthetic Audio (Fallback)
+        let nextNoteTime = 0;
+        function scheduleSynthMusic() {
+            if (isMuted || !isPlaying) return;
+            const tempo = 0.12;
+            const currentTime = audioCtx.currentTime;
+
+            if (currentTime >= nextNoteTime) {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                osc.type = 'square';
+                const note = (frames % 16 < 4) ? 55 : (frames % 16 < 8) ? 65 : 49;
+
+                osc.frequency.setValueAtTime(note, currentTime);
+                osc.frequency.exponentialRampToValueAtTime(note - 10, currentTime + 0.1);
+
+                gain.gain.setValueAtTime(0.1, currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, currentTime + 0.1);
+
+                osc.start(currentTime);
+                osc.stop(currentTime + 0.1);
+
+                // Hi-hat
+                if (frames % 4 === 0) {
+                    const hatOsc = audioCtx.createOscillator();
+                    const hatGain = audioCtx.createGain();
+                    hatOsc.connect(hatGain);
+                    hatGain.connect(audioCtx.destination);
+                    hatOsc.type = 'sawtooth';
+                    hatOsc.frequency.setValueAtTime(8000, currentTime);
+                    hatGain.gain.setValueAtTime(0.05, currentTime);
+                    hatGain.gain.exponentialRampToValueAtTime(0.001, currentTime + 0.05);
+                    hatOsc.start(currentTime);
+                    hatOsc.stop(currentTime + 0.05);
+                }
+                nextNoteTime = currentTime + tempo;
+            }
+        }
+
+        function playSound(type) {
+            if (isMuted) return;
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            osc.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+
+            if (type === 'jump') {
+                // Jump Sound (Synthetic)
+                osc.type = 'sawtooth';
+                const now = audioCtx.currentTime;
+                osc.frequency.setValueAtTime(150, now);
+                osc.frequency.linearRampToValueAtTime(250, now + 0.15);
+
+                const filter = audioCtx.createBiquadFilter();
+                filter.type = 'bandpass';
+                filter.frequency.value = 800;
+                filter.Q.value = 1;
+
+                osc.disconnect();
+                osc.connect(filter);
+                filter.connect(gainNode);
+
+                gainNode.gain.setValueAtTime(0, now);
+                gainNode.gain.linearRampToValueAtTime(0.4, now + 0.05);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+
+                osc.start(now);
+                osc.stop(now + 0.25);
+
+            } else if (type === 'score') {
+                // Score Sound (Synthetic)
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+                osc.frequency.setValueAtTime(1200, audioCtx.currentTime + 0.1);
+                gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.1);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.1);
+            } else if (type === 'hit') {
+                // Hit Sound (Synthetic Fallback)
+                if (!hitMusicLoaded) {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(50, audioCtx.currentTime + 0.4);
+                    gainNode.gain.setValueAtTime(0.4, audioCtx.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.4);
+                }
+            }
+        }
+
+        muteBtn.addEventListener('click', (e) => {
+            isMuted = !isMuted;
+            muteBtn.textContent = isMuted ? '🔇' : '🔊';
+            bgMusic.muted = isMuted;
+            hitMusic.muted = isMuted;
+            e.target.blur();
+        });
+
+        // Resize handling
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        // Samay Character
+        const samay = {
+            x: 60,
+            y: 150,
+            radius: 45,
+            velocity: 0,
+            gravity: isMobile ? 0.3 : 0.35, // Slightly lower gravity on mobile
+            jumpStrength: isMobile ? -8 : -7.5, // Slightly stronger jump on mobile
+            rotation: 0,
+
+            draw: function () {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                this.rotation = Math.min(Math.PI / 4, Math.max(-Math.PI / 4, (this.velocity * 0.1)));
+                ctx.rotate(this.rotation);
+
+                if (samayImg.complete && samayImg.naturalHeight !== 0) {
+                    ctx.beginPath();
+                    ctx.arc(0, 0, this.radius, 0, Math.PI * 2);
+                    ctx.closePath();
+                    ctx.clip();
+                    ctx.drawImage(samayImg, -this.radius, -this.radius, this.radius * 2, this.radius * 2);
+                } else {
+                    ctx.fillStyle = '#ffcc00';
+                    ctx.beginPath();
+                    ctx.arc(0, 0, this.radius, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
+                ctx.restore();
+            },
+
+            update: function () {
+                this.velocity += this.gravity;
+                this.y += this.velocity;
+
+                if (this.y + this.radius >= canvas.height - 50) {
+                    this.y = canvas.height - 50 - this.radius;
+                    gameOver("Hit the floor!");
+                }
+
+                if (this.y - this.radius <= 0) {
+                    this.y = this.radius;
+                    this.velocity = 0;
+                }
+            },
+
+            jump: function () {
+                this.velocity = this.jumpStrength;
+                playSound('jump');
+            }
+        };
+
+        const obstacleTypes = [
+            { label: "Dark Joke" },
+            { label: "FIR" },
+            { label: "Controversy" },
+            { label: "Twitter Mob" },
+        ];
+
+        class Obstacle {
+            constructor() {
+                this.w = 80;
+                this.gap = currentGap;
+                this.x = canvas.width;
+
+                const minHeight = 60;
+                const maxTopHeight = canvas.height - 50 - this.gap - minHeight;
+                this.topHeight = Math.floor(Math.random() * (maxTopHeight - minHeight + 1) + minHeight);
+                this.bottomY = this.topHeight + this.gap;
+
+
+                this.passed = false;
+                this.textOnTop = Math.random() > 0.5;
+                this.seed = Math.random() * 100;
+
+                // Alternating pillar texture selection for more randomness
+                let availableTextures = pillarTextures.filter(texture => texture !== lastPillarTexture);
+                if (availableTextures.length === 0) {
+                    availableTextures = pillarTextures;
+                }
+                this.pillarTexture = availableTextures[Math.floor(Math.random() * availableTextures.length)];
+                lastPillarTexture = this.pillarTexture;
+
+                // Special Labels for Special Pillars
+                if (this.pillarTexture === knightImg) {
+                    this.type = { label: "Ghoda bhe***", texture: knightImg };
+                } else if (this.pillarTexture === ranveerImg) {
+                    this.type = { label: "Controversy Return" }; // As requested
+                } else {
+                    this.type = obstacleTypes[Math.floor(Math.random() * obstacleTypes.length)];
+                }
+            }
+
+            drawPillarImage(x, y, w, h, isTop) {
+                // Check if image is loaded
+                const img = this.pillarTexture;
+
+                if (img.complete && img.naturalHeight !== 0) {
+                    ctx.save();
+                    if (isTop) {
+                        ctx.translate(x + w / 2, y + h / 2);
+                        ctx.rotate(Math.PI);
+                        ctx.drawImage(img, -w / 2, -h / 2, w, h);
+                    } else {
+                        ctx.drawImage(img, x, y, w, h);
+                    }
+                    ctx.restore();
+                } else {
+                    this.drawFire(x, y, w, h, isTop);
+                }
+            }
+
+            drawFire(x, y, w, h, isTop) {
+                const time = frames * 0.15 + this.seed;
+
+                const drawLayer = (widthPct, heightOffset, color1, color2, waveSpeed, waveAmp) => {
+                    const layerW = w * widthPct;
+                    const layerX = x + (w - layerW) / 2;
+                    let grad;
+                    if (isTop) {
+                        grad = ctx.createLinearGradient(layerX + layerW / 2, 0, layerX + layerW / 2, h);
+                    } else {
+                        grad = ctx.createLinearGradient(layerX + layerW / 2, y + h, layerX + layerW / 2, y);
+                    }
+                    grad.addColorStop(0, color1);
+                    grad.addColorStop(1, color2);
+                    ctx.fillStyle = grad;
+
+                    ctx.beginPath();
+                    if (isTop) {
+                        ctx.moveTo(layerX, 0);
+                        ctx.lineTo(layerX + layerW, 0);
+                        const segments = 8;
+                        const segWidth = layerW / segments;
+                        for (let i = segments; i >= 0; i--) {
+                            const px = layerX + (i * segWidth);
+                            const wave = Math.sin(time * waveSpeed + i * 0.5) * waveAmp + Math.cos(time * waveSpeed * 1.5 + i) * (waveAmp * 0.5);
+                            ctx.lineTo(px, h - heightOffset + wave);
+                        }
+                    } else {
+                        ctx.moveTo(layerX, y + h);
+                        ctx.lineTo(layerX + layerW, y + h);
+                        const segments = 8;
+                        const segWidth = layerW / segments;
+                        for (let i = segments; i >= 0; i--) {
+                            const px = layerX + (i * segWidth);
+                            const wave = Math.sin(time * waveSpeed + i * 0.5) * waveAmp + Math.cos(time * waveSpeed * 1.5 + i) * (waveAmp * 0.5);
+                            ctx.lineTo(px, y + heightOffset + wave);
+                        }
+                    }
+                    ctx.closePath();
+                    ctx.fill();
+                };
+
+                drawLayer(1.0, 0, '#8B0000', '#FF4500', 1.0, 10);
+                drawLayer(0.7, 15, '#FF4500', '#FFD700', 1.5, 8);
+                drawLayer(0.4, 30, '#FFFF00', '#FFFFFF', 2.0, 5);
+            }
+
+            draw() {
+                this.drawPillarImage(this.x, 0, this.w, this.topHeight, true);
+                const bottomHeight = canvas.height - 50 - this.bottomY;
+                this.drawPillarImage(this.x, this.bottomY, this.w, bottomHeight, false);
+
+                // Update in-game text style to match vintage theme
+                ctx.fillStyle = '#f8f0e3'; // Vintage Cream
+                ctx.font = '900 18px "Titan One", cursive'; // Use decorative font
+                ctx.textAlign = 'center';
+                ctx.strokeStyle = '#3e2723'; // Vintage Brown outline
+                ctx.lineWidth = 4;
+                ctx.shadowColor = "#3e2723";
+                ctx.shadowBlur = 0;
+
+                if (this.textOnTop) {
+                    ctx.save();
+                    ctx.translate(this.x + this.w / 2, 50);
+                    ctx.strokeText(this.type.label, 0, 0);
+                    ctx.fillText(this.type.label, 0, 0);
+                    ctx.restore();
+                } else {
+                    ctx.save();
+                    ctx.translate(this.x + this.w / 2, canvas.height - 70);
+                    ctx.strokeText(this.type.label, 0, 0);
+                    ctx.fillText(this.type.label, 0, 0);
+                    ctx.restore();
+                }
+                ctx.textAlign = 'start';
+            }
+
+            update() {
+                this.x -= gameSpeed;
+            }
+        }
+
+        const bg = {
+            x: 0,
+            draw: function () {
+                if (bgImg.complete && bgImg.naturalHeight !== 0) {
+                    ctx.drawImage(bgImg, 0, 0, canvas.width, canvas.height);
+                    // Increased overlay opacity for better UI contrast against vintage background
+                    ctx.fillStyle = 'rgba(62, 39, 35, 0.6)'; // Vintage brown overlay
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                } else {
+                    let gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+                    gradient.addColorStop(0, '#4834d4');
+                    gradient.addColorStop(1, '#686de0');
+                    ctx.fillStyle = gradient;
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                }
+
+                const groundY = canvas.height - 50;
+                const tileSize = 25;
+
+                // Darker, brownish ground shadow
+                ctx.fillStyle = 'rgba(30, 20, 10, 0.8)';
+                ctx.fillRect(0, groundY - 5, canvas.width, 5);
+
+                this.x -= gameSpeed;
+                if (this.x <= -tileSize * 2) this.x = 0;
+
+                for (let i = 0; i < canvas.width / tileSize + 2; i++) {
+                    for (let j = 0; j < 2; j++) {
+                        // Vintage checkerboard colors
+                        ctx.fillStyle = (i + j) % 2 === 0 ? '#d7ccc8' : '#5d4037';
+                        ctx.fillRect(this.x + i * tileSize, groundY + j * tileSize, tileSize, tileSize);
+                    }
+                }
+
+                // Antique gold ground line
+                ctx.strokeStyle = '#c4a777';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.moveTo(0, groundY);
+                ctx.lineTo(canvas.width, groundY);
+                ctx.stroke();
+            }
+        };
+
+        function resetGame() {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+
+            samay.y = 150;
+            samay.velocity = 0;
+            samay.rotation = 0;
+            obstacles = [];
+            score = 0;
+            frames = 0;
+
+            gameSpeed = 4.2;
+            currentGap = 200;
+
+            isGameOver = false;
+            isPlaying = true;
+
+            // Track game start
+            if (window.gtag) {
+                trackGameStart();
+                startPlayTimeTracking();
+            }
+            scoreDisplay.textContent = score;
+            scoreDisplay.classList.remove('hidden');
+            gameOverScreen.classList.add('hidden');
+            startScreen.classList.add('hidden');
+
+            aiTextDiv.style.display = 'none';
+            apologyBtn.textContent = "✨ Draft Apology Tweet";
+            apologyBtn.disabled = false;
+
+            // Music Logic
+            if (!isMuted) {
+                // Try playing external music first
+                const playPromise = bgMusic.play();
+                if (playPromise !== undefined) {
+                    playPromise.catch(error => {
+                        console.log("BG Music Play Failed, falling back to synth.");
+                        bgMusicLoaded = false;
+                    });
+                }
+            }
+
+            loop();
+        }
+
+
+
+        function gameOver(reason) {
+            isGameOver = true;
+            isPlaying = false;
+
+            // Track game over and play time
+            if (window.gtag) {
+                trackGameOver(reason, score);
+                trackPlayTime();
+            }
+            lastDeathReason = reason || "Controversy";
+
+            // Stop background music
+            bgMusic.pause();
+            bgMusic.currentTime = 0;
+
+            if (!isMuted) {
+                // Play ONLY the Balraj audio
+                hitMusic.currentTime = 0;
+                const playPromise = hitMusic.play();
+                if (playPromise !== undefined) {
+                    playPromise.catch(error => {
+                        console.log("Hit Music Play Failed:", error);
+                    });
+                }
+            }
+
+            if (score > highScore) {
+                highScore = score;
+                localStorage.setItem('samay_highscore', highScore);
+            }
+
+            deathReasonSpan.textContent = "Cancelled by: " + lastDeathReason;
+            finalScoreSpan.textContent = score;
+            highScoreSpan.textContent = highScore;
+            scoreDisplay.classList.add('hidden');
+            gameOverScreen.classList.remove('hidden');
+        }
+
+        function loop() {
+            if (!isPlaying) return;
+
+            // If BG music failed to load, play synth beat
+            if (!bgMusicLoaded) {
+                scheduleSynthMusic();
+            }
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            bg.draw();
+
+            // Adjust obstacle spawn rate based on device
+            const spawnRate = isMobile ? 120 : 100;
+            if (frames % spawnRate === 0) {
+                obstacles.push(new Obstacle());
+            }
+
+            for (let i = 0; i < obstacles.length; i++) {
+                let o = obstacles[i];
+                o.update();
+                o.draw();
+
+                const sLeft = samay.x - samay.radius + 15;
+                const sRight = samay.x + samay.radius - 15;
+                const sTop = samay.y - samay.radius + 10;
+                const sBottom = samay.y + samay.radius - 10;
+
+                if (sRight > o.x && sLeft < o.x + o.w) {
+                    if (sTop < o.topHeight) gameOver(o.type.label);
+                    if (sBottom > o.bottomY) gameOver(o.type.label);
+                }
+
+                if (o.x + o.w < samay.x && !o.passed) {
+                    score++;
+                    scoreDisplay.textContent = score;
+                    o.passed = true;
+                    playSound('score');
+
+                    // Play score increase sound if not muted
+                    if (!isMuted) {
+                        const scoreSound = document.getElementById('scoreSound');
+                        scoreSound.currentTime = 0;
+                        scoreSound.play().catch(e => console.log('Score sound play failed:', e));
+                    }
+
+                    // Adjust difficulty increase based on device
+                    if (score % 1 === 0) {
+                        gameSpeed += isMobile ? 0.1 : 0.15; // Slower speed increase on mobile
+                        const gapDecrease = isMobile ? 3 : 6; // Slower gap decrease on mobile
+                        const minGap = isMobile ? 180 : 140; // Larger minimum gap on mobile
+                        currentGap = Math.max(minGap, currentGap - gapDecrease);
+                    }
+                }
+
+                if (o.x + o.w < 0) {
+                    obstacles.shift();
+                    i--;
+                }
+            }
+
+            samay.update();
+            samay.draw();
+
+            frames++;
+            if (isPlaying) requestAnimationFrame(loop);
+        }
+
+        bgImg.onload = () => { if (!isPlaying) { bg.draw(); samay.draw(); } };
+        samayImg.onload = () => { if (!isPlaying) samay.draw(); };
+        setTimeout(() => { if (!isPlaying) { bg.draw(); samay.draw(); } }, 500);
+
+        function handleInput(e) {
+            if (e.type === 'keydown' && e.code !== 'Space') return;
+            if (e.type === 'touchstart') e.preventDefault();
+
+            if (!isPlaying && !isGameOver && startScreen.classList.contains('hidden') === false) {
+                // Handled by btn
+            } else if (isPlaying) {
+                samay.jump();
+            } else if (isGameOver) {
+                // Handled by btn
+            }
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                if (!isPlaying && !isGameOver && !startScreen.classList.contains('hidden')) resetGame();
+                else if (isPlaying) samay.jump();
+                else if (isGameOver) resetGame();
+            }
+        });
+
+        canvas.addEventListener('mousedown', () => { if (isPlaying) samay.jump(); });
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            if (isPlaying) samay.jump();
+        }, { passive: false });
+
+        startBtn.addEventListener('click', resetGame);
+        restartBtn.addEventListener('click', resetGame);
+
+        // Developer Credits
+        const credits = document.createElement('div');
+        credits.style.position = 'fixed';
+        credits.style.bottom = '15px';
+        credits.style.right = '15px';
+        credits.style.background = 'rgba(255, 255, 255, 0.9)';
+        credits.style.color = 'var(--pop-dark)';
+        credits.style.padding = '10px 16px';
+        credits.style.borderRadius = '25px';
+        credits.style.fontFamily = '"Nunito", sans-serif';
+        credits.style.fontSize = '14px';
+        credits.style.fontWeight = '700';
+        credits.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.2)';
+        credits.style.border = '2px solid var(--pop-yellow)';
+        credits.style.zIndex = '1000';
+        credits.style.transition = 'all 0.3s ease';
+        credits.style.display = 'flex';
+        credits.style.alignItems = 'center';
+        credits.style.gap = '4px';
+        credits.innerHTML = '<span style="display: inline-flex; align-items: center; gap: 4px;">Developed by</span> <a href="https://www.linkedin.com/in/aman-kanojiya-7386822b0/" target="_blank" style="color: var(--pop-blue); text-decoration: none; font-weight: 900; display: inline-flex; align-items: center;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="#0077b5" style="margin-right: 4px;"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>Aman</a> <span>|</span> <a href="https://github.com/codedbyamankanojiya" target="_blank" style="color: var(--pop-pink); text-decoration: none; font-weight: 900; display: inline-flex; align-items: center;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="#333" style="margin-right: 4px;"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>GitHub</a>';
+
+        // Add hover effect
+        credits.onmouseover = function () {
+            this.style.transform = 'scale(1.02)';
+            this.style.boxShadow = '0 6px 12px rgba(0, 0, 0, 0.25)';
+        };
+        credits.onmouseout = function () {
+            this.style.transform = 'scale(1)';
+            this.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.2)';
+        };
+        document.body.appendChild(credits);
+    </script>
+</body>
+
+</html>
