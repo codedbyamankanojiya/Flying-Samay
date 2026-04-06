@@ -337,7 +337,7 @@
     <div id="score-display" class="hidden">0</div>
     <button id="mute-btn">🔊</button>
     <audio id="scoreSound" preload="auto">
-        <source src="samay-raina-on-drugs-shorts-trending_w9Y59fz9.mp3" type="audio/mpeg">
+        <source src="Nashe.mp3" type="audio/mpeg">
     </audio>
 
 
@@ -349,7 +349,7 @@
             <button id="start-btn">Start Stream</button>
         </div>
 
-        <div id="game-over-screen" class="screen hidden">
+        <div id="game-over-screen" class="hidden screen">
             <!-- Fun red/pink color for 'Cancelled' -->
             <h1 style="color: #ff4757; -webkit-text-stroke: 2px #fff; text-shadow: 4px 4px 0 #2f3542;">CANCELLED!</h1>
             <p id="death-reason">You got cancelled.</p>
@@ -441,7 +441,7 @@
             apologyBtn.textContent = "✨ Drafting...";
             aiTextDiv.style.display = 'block';
             aiTextDiv.textContent = "Consulting PR team...";
-            const link = "https://flying-samay-raina.vercel.app/";
+            const link = "https://flying-samay.vercel.app/";
             try {
                 const prompt = `You are a satirical AI writing for comedian Samay Raina. 
             He just lost a game called 'Controversy Dodge' by hitting a "${lastDeathReason}" obstacle. 
@@ -500,7 +500,7 @@
         bgMusic.addEventListener('canplaythrough', () => { bgMusicLoaded = true; });
         bgMusic.addEventListener('error', () => { console.log("BG Music Failed, using synth"); bgMusicLoaded = false; });
 
-        const hitMusic = new Audio("samay-raina-calling-balraj-on-livestream-samayraina-darkcomedy_wO8S1i4Y.mp3");
+        const hitMusic = new Audio("BKL.mp3");
         hitMusic.volume = 1.0;
 
         // Check if Hit music loads successfully
