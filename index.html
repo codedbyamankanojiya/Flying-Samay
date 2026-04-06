@@ -79,33 +79,30 @@
         rel="stylesheet">
     <style>
         :root {
-            /* Fun Palette derived from the Toy/Cartoon images */
-            --pop-blue: #4834d4;
-            --pop-yellow: #f9ca24;
-            --pop-pink: #ff7979;
-            --pop-orange: #f0932b;
-            --pop-green: #6ab04c;
-            --pop-white: #ffffff;
-            --pop-dark: #30336b;
+            /* Sleek Dark/Neon Palette */
+            --bg-dark: #0f0c29;
+            --bg-mid: #302b63;
+            --bg-light: #24243e;
+            --neon-pink: #f72585;
+            --neon-blue: #4cc9f0;
+            --neon-purple: #7209b7;
+            --neon-green: #06d6a0;
+            --text-main: #ffffff;
+            --text-muted: #a0a0b0;
+            --glass-bg: rgba(20, 20, 35, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.1);
             --game-gap: 200px;
-            /* Default gap between pillars */
             --game-speed: 3;
-            /* Default game speed */
         }
 
         body {
             margin: 0;
             padding: 0;
             overflow: hidden;
-            background-color: var(--pop-blue);
-            /* Grid pattern background with blue tint overlay */
-            background-image:
-                linear-gradient(rgba(72, 52, 212, 0.4), rgba(72, 52, 212, 0.4)),
-                linear-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
-            background-size: 40px 40px;
+            background: linear-gradient(135deg, var(--bg-dark), var(--bg-mid), var(--bg-light));
             font-family: 'Nunito', sans-serif;
             touch-action: none;
+            color: var(--text-main);
         }
 
         #gameCanvas {
@@ -125,168 +122,171 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            /* background: rgba(72, 52, 212, 0.4);  Blue tint overlay removed from here */
         }
 
         .screen {
-            /* Sticker / Pop-up Look */
-            background: var(--pop-yellow);
-            padding: 2.5rem;
-            border-radius: 20px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            padding: 3rem;
+            border-radius: 24px;
             text-align: center;
-            color: var(--pop-dark);
-            /* Thick white border for sticker effect */
-            border: 8px solid var(--pop-white);
+            color: var(--text-main);
+            border: 1px solid var(--glass-border);
             pointer-events: auto;
             max-width: 90%;
             width: 450px;
-            /* Hard shadow for pop art feel */
-            box-shadow: 10px 10px 0px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(255,255,255,0.05);
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 15px;
+            gap: 20px;
             position: relative;
-            transform: rotate(-2deg);
-            /* Jaunty angle */
+            transform: none;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
         h1 {
             margin: 0 0 5px 0;
-            font-size: 3rem;
-            color: var(--pop-pink);
+            font-size: 2.8rem;
+            color: #fff;
             text-transform: uppercase;
             font-family: 'Titan One', cursive;
-            /* Comic book outline stroke */
-            -webkit-text-stroke: 2px var(--pop-dark);
-            text-shadow: 4px 4px 0px var(--pop-white);
-            letter-spacing: 1px;
-            line-height: 1.1;
+            -webkit-text-stroke: 0px;
+            text-shadow: 0 0 10px var(--neon-pink), 0 0 20px var(--neon-pink), 0 0 40px var(--neon-purple);
+            letter-spacing: 2px;
+            line-height: 1.2;
         }
 
         p {
-            font-size: 1.4rem;
+            font-size: 1.2rem;
             margin: 5px 0;
-            font-weight: 900;
-            color: var(--pop-dark);
+            font-weight: 700;
+            color: var(--text-main);
         }
 
         .sub-text {
-            color: var(--pop-blue);
-            font-size: 1.1rem;
+            color: var(--neon-blue);
+            font-size: 1rem;
             margin-top: -5px;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             font-weight: 700;
+            letter-spacing: 1px;
+            text-shadow: 0 0 8px rgba(76, 201, 240, 0.5);
         }
 
         button {
-            /* Bubbly Button Styling */
-            background: var(--pop-orange);
-            color: var(--pop-white);
-            border: 4px solid var(--pop-white);
-            padding: 15px 30px;
-            font-size: 1.5rem;
+            background: linear-gradient(45deg, var(--neon-purple), var(--neon-pink));
+            color: #fff;
+            border: none;
+            padding: 16px 32px;
+            font-size: 1.2rem;
             border-radius: 50px;
-            /* Pill shape */
             cursor: pointer;
             font-weight: 900;
-            font-family: 'Titan One', cursive;
-            transition: transform 0.1s;
-            box-shadow: 0 6px 0 #d35400;
-            /* Darker orange shadow */
+            font-family: 'Nunito', sans-serif;
             text-transform: uppercase;
+            letter-spacing: 2px;
             margin-top: 10px;
             width: 100%;
-            text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.2);
+            box-shadow: 0 0 15px rgba(247, 37, 133, 0.4), inset 0 0 0 1px rgba(255,255,255,0.2);
+            transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
 
         button:active {
-            transform: translateY(6px);
-            box-shadow: 0 0 0 #d35400;
+            transform: scale(0.95);
+            box-shadow: 0 0 5px rgba(247, 37, 133, 0.4);
         }
 
         button:hover {
-            filter: brightness(1.1);
-            transform: scale(1.02);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(247, 37, 133, 0.6), inset 0 0 0 1px rgba(255,255,255,0.4);
         }
 
         .gemini-btn {
-            /* Fun Purple/Blue Gradient */
-            background: linear-gradient(135deg, #a29bfe, #6c5ce7);
-            box-shadow: 0 6px 0 #4834d4;
-            font-size: 1.2rem;
+            background: linear-gradient(45deg, #4361ee, #4cc9f0);
+            box-shadow: 0 0 15px rgba(76, 201, 240, 0.4), inset 0 0 0 1px rgba(255,255,255,0.2);
+            font-size: 1.1rem;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 10px;
-            font-family: 'Nunito', sans-serif;
-            font-weight: 900;
         }
 
         .gemini-btn:active {
-            box-shadow: 0 0 0 #4834d4;
-            transform: translateY(6px);
+            transform: scale(0.95);
+            box-shadow: 0 0 5px rgba(76, 201, 240, 0.4);
+        }
+
+        .gemini-btn:hover {
+            box-shadow: 0 8px 25px rgba(76, 201, 240, 0.6), inset 0 0 0 1px rgba(255,255,255,0.4);
+            transform: translateY(-3px);
         }
 
         .ai-response-box {
-            /* Chat bubble look */
-            background: var(--pop-white);
-            border: 4px solid var(--pop-dark);
-            border-radius: 15px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
             padding: 15px;
             margin-top: 10px;
-            font-size: 1.1rem;
+            font-size: 1rem;
             text-align: left;
             font-family: 'Nunito', sans-serif;
-            color: var(--pop-dark);
+            color: var(--text-main);
             width: 100%;
             box-sizing: border-box;
             min-height: 80px;
             display: none;
             white-space: pre-wrap;
-            box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.1);
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
         }
 
         #score-display {
             position: absolute;
-            top: 8%;
+            top: 6%;
             width: 100%;
             text-align: center;
-            font-size: 6rem;
-            color: var(--pop-yellow);
+            font-size: 5rem;
+            color: #fff;
             font-family: 'Titan One', cursive;
-            /* Heavy dark stroke for visibility */
-            -webkit-text-stroke: 3px var(--pop-dark);
-            text-shadow: 5px 5px 0 var(--pop-pink);
+            -webkit-text-stroke: 0px;
+            text-shadow: 0 0 15px var(--neon-blue), 0 0 30px var(--neon-blue);
             pointer-events: none;
             z-index: 10;
         }
 
         #mute-btn {
             position: absolute;
-            top: 20px;
-            right: 20px;
-            background: var(--pop-pink);
-            color: var(--pop-white);
-            border: 3px solid var(--pop-white);
+            top: 24px;
+            right: 24px;
+            background: rgba(255,255,255,0.1);
+            color: var(--text-main);
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(8px);
             border-radius: 50%;
             width: 50px;
             height: 50px;
-            font-size: 24px;
+            font-size: 20px;
             cursor: pointer;
             pointer-events: auto;
             z-index: 20;
             padding: 0;
-            box-shadow: 0 4px 0 #b33939;
-            margin-top: 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
             display: flex;
             justify-content: center;
             align-items: center;
+            transition: all 0.2s;
+            margin-top: 0;
         }
 
+        #mute-btn:hover {
+            background: rgba(255,255,255,0.2);
+            transform: scale(1.1);
+        }
+        
         #mute-btn:active {
-            transform: translateY(4px);
-            box-shadow: 0 0 0 #b33939;
+            transform: scale(0.9);
         }
 
         .hidden {
@@ -296,9 +296,7 @@
         @media (max-width: 600px) {
             :root {
                 --game-gap: 240px;
-                /* Larger gap for mobile */
                 --game-speed: 2.5;
-                /* Slightly slower for mobile */
             }
 
             h1 {
@@ -307,20 +305,19 @@
 
             button {
                 padding: 12px 20px;
-                font-size: 1.2rem;
+                font-size: 1.1rem;
                 min-width: 180px;
                 margin: 8px auto;
             }
 
             #score-display {
-                font-size: 3.5rem;
+                font-size: 4rem;
                 top: 5%;
-                text-shadow: 2px 2px 0 #000;
             }
 
             .screen {
                 width: 90%;
-                padding: 1.5rem;
+                padding: 2rem 1.5rem;
                 box-sizing: border-box;
             }
 
@@ -350,18 +347,17 @@
         </div>
 
         <div id="game-over-screen" class="hidden screen">
-            <!-- Fun red/pink color for 'Cancelled' -->
-            <h1 style="color: #ff4757; -webkit-text-stroke: 2px #fff; text-shadow: 4px 4px 0 #2f3542;">CANCELLED!</h1>
+            <h1 style="color: var(--neon-pink); -webkit-text-stroke: 0px; text-shadow: 0 0 10px var(--neon-pink), 0 0 20px var(--neon-purple);">CANCELLED!</h1>
             <p id="death-reason">You got cancelled.</p>
-            <p style="font-family: 'Titan One', cursive; font-size: 1.2rem; margin-top: 10px; color: #30336b;">
-                Score: <span id="final-score" style="color: #e056fd;">0</span> |
-                High Score: <span id="high-score" style="color: #e056fd;">0</span>
+            <p style="font-family: 'Titan One', cursive; font-size: 1.2rem; margin-top: 10px; color: var(--text-muted);">
+                Score: <span id="final-score" style="color: var(--neon-green); text-shadow: 0 0 5px rgba(6, 214, 160, 0.5);">0</span> |
+                High Score: <span id="high-score" style="color: var(--neon-green); text-shadow: 0 0 5px rgba(6, 214, 160, 0.5);">0</span>
             </p>
 
             <button id="apology-btn" class="gemini-btn">✨ Draft Apology Tweet</button>
             <div id="ai-apology-text" class="ai-response-box"></div>
 
-            <button id="restart-btn" style="background: #6ab04c; box-shadow: 0 6px 0 #3c632b;">Rematch?</button>
+            <button id="restart-btn" style="background: linear-gradient(45deg, #06d6a0, #118ab2); box-shadow: 0 0 15px rgba(6, 214, 160, 0.4), inset 0 0 0 1px rgba(255,255,255,0.2);">Rematch?</button>
         </div>
     </div>
 
@@ -818,15 +814,15 @@
         const bg = {
             x: 0,
             draw: function () {
-                if (bgImg.complete && bgImg.naturalHeight !== 0) {
+                if (bgImg.complete && bgImg.naturalHeight !== 0 && bgImg.src !== "https://i.ib") {
                     ctx.drawImage(bgImg, 0, 0, canvas.width, canvas.height);
-                    // Increased overlay opacity for better UI contrast against vintage background
-                    ctx.fillStyle = 'rgba(62, 39, 35, 0.6)'; // Vintage brown overlay
+                    ctx.fillStyle = 'rgba(15, 12, 41, 0.8)'; // Dark neon overlay
                     ctx.fillRect(0, 0, canvas.width, canvas.height);
                 } else {
                     let gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
-                    gradient.addColorStop(0, '#4834d4');
-                    gradient.addColorStop(1, '#686de0');
+                    gradient.addColorStop(0, '#0f0c29');
+                    gradient.addColorStop(0.5, '#302b63');
+                    gradient.addColorStop(1, '#24243e');
                     ctx.fillStyle = gradient;
                     ctx.fillRect(0, 0, canvas.width, canvas.height);
                 }
@@ -834,27 +830,32 @@
                 const groundY = canvas.height - 50;
                 const tileSize = 25;
 
-                // Darker, brownish ground shadow
-                ctx.fillStyle = 'rgba(30, 20, 10, 0.8)';
-                ctx.fillRect(0, groundY - 5, canvas.width, 5);
+                // Glowing neon line on the floor
+                ctx.fillStyle = 'rgba(6, 214, 160, 0.1)';
+                ctx.fillRect(0, groundY - 10, canvas.width, 10);
 
                 this.x -= gameSpeed;
                 if (this.x <= -tileSize * 2) this.x = 0;
 
                 for (let i = 0; i < canvas.width / tileSize + 2; i++) {
                     for (let j = 0; j < 2; j++) {
-                        // Vintage checkerboard colors
-                        ctx.fillStyle = (i + j) % 2 === 0 ? '#d7ccc8' : '#5d4037';
+                        // Cyberpunk grid floor
+                        ctx.fillStyle = (i + j) % 2 === 0 ? '#1a1a2e' : '#16213e';
                         ctx.fillRect(this.x + i * tileSize, groundY + j * tileSize, tileSize, tileSize);
                     }
                 }
 
-                // Antique gold ground line
-                ctx.strokeStyle = '#c4a777';
+                // Neon line
+                ctx.strokeStyle = 'rgba(6, 214, 160, 0.8)';
                 ctx.lineWidth = 3;
                 ctx.beginPath();
                 ctx.moveTo(0, groundY);
                 ctx.lineTo(canvas.width, groundY);
+                ctx.stroke();
+                
+                // Add top ground glow
+                ctx.strokeStyle = 'rgba(6, 214, 160, 0.3)';
+                ctx.lineWidth = 8;
                 ctx.stroke();
             }
         };
@@ -1049,32 +1050,42 @@
         // Developer Credits
         const credits = document.createElement('div');
         credits.style.position = 'fixed';
-        credits.style.bottom = '15px';
-        credits.style.right = '15px';
-        credits.style.background = 'rgba(255, 255, 255, 0.9)';
-        credits.style.color = 'var(--pop-dark)';
-        credits.style.padding = '10px 16px';
-        credits.style.borderRadius = '25px';
+        credits.style.bottom = '20px';
+        credits.style.right = '20px';
+        credits.style.background = 'var(--glass-bg)';
+        credits.style.backdropFilter = 'blur(12px)';
+        credits.style.WebkitBackdropFilter = 'blur(12px)';
+        credits.style.color = 'var(--text-main)';
+        credits.style.padding = '12px 20px';
+        credits.style.borderRadius = '30px';
         credits.style.fontFamily = '"Nunito", sans-serif';
         credits.style.fontSize = '14px';
-        credits.style.fontWeight = '700';
-        credits.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.2)';
-        credits.style.border = '2px solid var(--pop-yellow)';
+        credits.style.fontWeight = '600';
+        credits.style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.3), inset 0 0 0 1px rgba(255,255,255,0.1)';
         credits.style.zIndex = '1000';
-        credits.style.transition = 'all 0.3s ease';
+        credits.style.transition = 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
         credits.style.display = 'flex';
         credits.style.alignItems = 'center';
-        credits.style.gap = '4px';
-        credits.innerHTML = '<span style="display: inline-flex; align-items: center; gap: 4px;">Developed by</span> <a href="https://www.linkedin.com/in/aman-kanojiya-7386822b0/" target="_blank" style="color: var(--pop-blue); text-decoration: none; font-weight: 900; display: inline-flex; align-items: center;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="#0077b5" style="margin-right: 4px;"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>Aman</a> <span>|</span> <a href="https://github.com/codedbyamankanojiya" target="_blank" style="color: var(--pop-pink); text-decoration: none; font-weight: 900; display: inline-flex; align-items: center;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="#333" style="margin-right: 4px;"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>GitHub</a>';
+        credits.style.gap = '8px';
+        credits.style.cursor = 'default';
+        credits.innerHTML = '<span style="opacity: 0.8;">Crafted by</span> <a href="https://www.linkedin.com/in/aman-kanojiya-7386822b0/" target="_blank" style="color: var(--neon-blue); text-decoration: none; font-weight: 800; display: inline-flex; align-items: center; transition: text-shadow 0.2s;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 5px;"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>Aman</a> <span style="opacity: 0.4;">|</span> <a href="https://github.com/codedbyamankanojiya" target="_blank" style="color: var(--neon-pink); text-decoration: none; font-weight: 800; display: inline-flex; align-items: center; transition: text-shadow 0.2s;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 5px;"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>GitHub</a>';
 
         // Add hover effect
         credits.onmouseover = function () {
-            this.style.transform = 'scale(1.02)';
-            this.style.boxShadow = '0 6px 12px rgba(0, 0, 0, 0.25)';
+            this.style.transform = 'translateY(-3px)';
+            this.style.boxShadow = '0 12px 40px rgba(0, 0, 0, 0.4), inset 0 0 0 1px rgba(255,255,255,0.2)';
+            this.style.background = 'rgba(30, 30, 50, 0.75)';
+            const links = this.querySelectorAll('a');
+            links[0].style.textShadow = '0 0 10px rgba(76, 201, 240, 0.8)';
+            links[1].style.textShadow = '0 0 10px rgba(247, 37, 133, 0.8)';
         };
         credits.onmouseout = function () {
-            this.style.transform = 'scale(1)';
-            this.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.2)';
+            this.style.transform = 'translateY(0)';
+            this.style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.3), inset 0 0 0 1px rgba(255,255,255,0.1)';
+            this.style.background = 'var(--glass-bg)';
+            const links = this.querySelectorAll('a');
+            links[0].style.textShadow = 'none';
+            links[1].style.textShadow = 'none';
         };
         document.body.appendChild(credits);
     </script>
